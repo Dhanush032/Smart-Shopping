@@ -59,7 +59,7 @@ Smart Shopping/
 ### 1. Clone the Repository
 ```bash
 git clone <repository-url>
-cd ecommerce-backend
+cd Smart Shopping
 ```
 
 ### 2. Install Dependencies

@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+
+{% block title %}Login - Smart Shopping Platform{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card">
+                <div class="card-header bg-primary text-white text-center py-4">
+                    <h3 class="mb-0">
+                        <i class="fas fa-sign-in-alt me-2"></i>Login
+                    </h3>
+                </div>
+                <div class="card-body p-4">
+                    <form id="loginForm">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="username" name="username" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="rememberMe">
+                            <label class="form-check-label" for="rememberMe">
+                                Remember me
+                            </label>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary" id="loginBtn">
+                                <i class="fas fa-sign-in-alt me-2"></i>Login
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <hr class="my-4">
+                    
+                    <div class="text-center">
+                        <p class="mb-0">Don't have an account?</p>
+                        <a href="/register/" class="btn btn-outline-primary">
+                            <i class="fas fa-user-plus me-2"></i>Register Here
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Demo for use accounts -->
+            <div class="card mt-4">
+                <div class="card-header bg-info text-white">
+                    <h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Demo Credentials</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-6">
+                            <h6>Admin Account:</h6>
+                            <p class="mb-1"><strong>Username:</strong> admin</p>
+                            <p class="mb-0"><strong>Password:</strong> admin@1234</p>
+                            <button class="btn btn-sm btn-outline-info mt-2" onclick="fillCredentials('admin', 'admin123')">
+                                Use Admin Credentials
+                            </button>
+                        </div>
+                        <div class="col-6">
+                            <h6>Customer Account:</h6>
+                            <p class="mb-1"><strong>Username:</strong> admin</p>
+                            <p class="mb-0"><strong>Password:</strong> admin@1234</p>
+                            <button class="btn btn-sm btn-outline-info mt-2" onclick="fillCredentials('customer', 'customer123')">
+                                Use Customer Credentials
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const loginBtn = document.getElementById('loginBtn');
+        const originalText = loginBtn.innerHTML;
+        
+        // Show loading state
+        loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Logging in...';
+        loginBtn.disabled = true;
+        
+        const formData = new FormData(this);
+        const data = {
+            username: formData.get('username'),
+            password: formData.get('password')
+        };
+        
+        function getCSRFToken() {
+        const cookieValue = document.cookie
+            .split('; ')
+            .find(row => row.startsWith('csrftoken='))
+            ?.split('=')[1];
+        return cookieValue;
+        }
+
+        
+        try {
+            const response = await fetch('/api/auth/login/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCSRFToken(),
+                },
+                body: JSON.stringify(data)
+            });
+            
+            const result = await response.json();
+            
+            if (response.ok) {
+                // Store tokens and user info
+                localStorage.setItem('access_token', result.access);
+                localStorage.setItem('refresh_token', result.refresh);
+                localStorage.setItem('user', JSON.stringify(result.user));
+                
+                showAlert('Login successful! Redirecting...', 'success');
+                
+                // Redirect after a short delay
+                setTimeout(() => {
+                    if (result.user.role === 'admin') {
+                        window.location.href = '/admin-dashboard/';
+                    } else {
+                        window.location.href = '/products/';
+                    }
+                }, 1500);
+            } else {
+                showAlert(result.detail || 'Login failed. Please check your credentials.', 'danger');
+            }
+        } catch (error) {
+            console.error('Login error:', error);
+            showAlert('Network error. Please try again.', 'danger');
+        } finally {
+            // Reset button state
+            loginBtn.innerHTML = originalText;
+            loginBtn.disabled = false;
+        }
+    });
+    
+    // Fill demo 
+    function fillCredentials(username, password) {
+        document.getElementById('username').value = username;
+        document.getElementById('password').value = password;
+    }
+    
+    // Redirect if already logged in
+    if (localStorage.getItem('access_token')) {
+        window.location.href = '/';
+    }
+</script>
+{% endblock %}

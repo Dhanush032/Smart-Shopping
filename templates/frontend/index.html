@@ -1,0 +1,229 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - Smart Shopping Platform{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <h1 class="display-4 fw-bold mb-4">Smart Shopping, Made Simple</h1>
+                <p class="lead mb-4">Browse the latest products at unbeatable prices</p>
+                <div class="d-flex gap-3 justify-content-center">
+                    <a href="/products/" class="btn btn-light btn-lg">
+                        <i class="fas fa-shopping-bag me-2"></i>Start Shopping
+                    </a>
+                    <a href="/api/docs/" class="btn btn-outline-light btn-lg">
+                        <i class="fas fa-code me-2"></i>Developer API
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-12">
+                <h2 class="fw-bold">What Makes Us Different</h2>
+            </div>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 text-center">
+                    <div class="card-body">
+                        <div class="text-primary mb-3">
+                            <i class="fas fa-shield-alt fa-3x"></i>
+                        </div>
+                        <h5 class="card-title">Safe & Secure Login</h5>
+                        <p class="card-text">Personalized and secure access for both customers and admins</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 text-center">
+                    <div class="card-body">
+                        <div class="text-success mb-3">
+                            <i class="fas fa-boxes fa-3x"></i>
+                        </div>
+                        <h5 class="card-title">Smart Product Catalog</h5>
+                        <p class="card-text">Easily browse by categories, track stock in real-time, and find what you need quickly.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 text-center">
+                    <div class="card-body">
+                        <div class="text-info mb-3">
+                            <i class="fas fa-shopping-cart fa-3x"></i>
+                        </div>
+                        <h5 class="card-title">Seamless Order Tracking</h5>
+                        <p class="card-text">Track your orders every step of the way – from cart to doorstep.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Products -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-12 text-center">
+                <h2 class="fw-bold">Top Picks for You</h2>
+                <p class="text-muted">Handpicked products trending today</p>
+            </div>
+        </div>
+        <div class="row" id="featured-products">
+            <div class="col-12 text-center">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-2 text-muted">Loading products...</p>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col-12 text-center">
+                <a href="/products/" class="btn btn-primary btn-lg">
+                    View All Products <i class="fas fa-arrow-right ms-2"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats  -->
+<section class="py-5">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-3 mb-3">
+                <div class="card border-primary">
+                    <div class="card-body">
+                        <i class="fas fa-users text-primary fa-2x mb-2"></i>
+                        <h4 class="fw-bold" id="total-users">-</h4>
+                        <p class="text-muted mb-0">Total Users</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card border-success">
+                    <div class="card-body">
+                        <i class="fas fa-box text-success fa-2x mb-2"></i>
+                        <h4 class="fw-bold" id="total-products">-</h4>
+                        <p class="text-muted mb-0">Products</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card border-warning">
+                    <div class="card-body">
+                        <i class="fas fa-shopping-bag text-warning fa-2x mb-2"></i>
+                        <h4 class="fw-bold" id="total-orders">-</h4>
+                        <p class="text-muted mb-0">Orders</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card border-info">
+                    <div class="card-body">
+                        <i class="fas fa-tags text-info fa-2x mb-2"></i>
+                        <h4 class="fw-bold" id="total-categories">-</h4>
+                        <p class="text-muted mb-0">Categories</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // show featured products
+    async function loadFeaturedProducts() {
+        try {
+            const response = await fetch('/api/products/featured/');
+            const data = await response.json();
+            
+            const container = document.getElementById('featured-products');
+            
+            if (data.results && data.results.length > 0) {
+                const products = data.results.slice(0, 3); 
+                container.innerHTML = products.map(product => `
+                    <div class="col-md-4 mb-4">
+                        <div class="card product-card h-100">
+                            <img src="${product.image || 'https://images.pexels.com/photos/4041392/pexels-photo-4041392.jpeg?auto=compress&cs=tinysrgb&w=400'}" 
+                            class="card-img-top" alt="${product.name}" style="height: 200px; object-fit: cover;">
+                            <div class="card-body">
+                                <h5 class="card-title">${product.name}</h5>
+                                <p class="text-muted">${product.category.name}</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        ${product.discount_price ? 
+                                            `<span class="text-primary fw-bold">$${product.discount_price}</span>
+                                            <small class="text-muted text-decoration-line-through">$${product.price}</small>`
+                                            : `<span class="text-primary fw-bold">$${product.price}</span>`
+                                        }
+                                    </div>
+                                    <span class="badge ${product.is_in_stock ? 'bg-success' : 'bg-danger'}">
+                                        ${product.is_in_stock ? 'In Stock' : 'Out of Stock'}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                container.innerHTML = `
+                    <div class="col-12 text-center">
+                        <p class="text-muted">No featured products available</p>
+                    </div>
+                `;
+            }
+        } catch (error) {
+            console.error('Error loading featured products:', error);
+            document.getElementById('featured-products').innerHTML = `
+                <div class="col-12 text-center">
+                    <p class="text-danger">Error loading products</p>
+                </div>
+            `;
+        }
+    }
+
+    // asow platform stats
+    async function loadStats() {
+        try {
+            // show products count
+            const productsResponse = await fetch('/api/products/');
+            if (productsResponse.ok) {
+                const productsData = await productsResponse.json();
+                document.getElementById('total-products').textContent = productsData.count || 0;
+            }
+
+            // show categories count
+            const categoriesResponse = await fetch('/api/products/categories/');
+            if (categoriesResponse.ok) {
+                const categoriesData = await categoriesResponse.json();
+                document.getElementById('total-categories').textContent = categoriesData.count || 0;
+            }
+
+            // Set placeholder values for protected endpoints
+            document.getElementById('total-users').textContent = '100+';
+            document.getElementById('total-orders').textContent = '250+';
+            
+        } catch (error) {
+            console.error('Error loading stats:', error);
+        }
+    }
+
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', function() {
+        loadFeaturedProducts();
+        loadStats();
+    });
+</script>
+{% endblock %}

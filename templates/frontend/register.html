@@ -1,0 +1,177 @@
+{% extends 'base.html' %}
+
+{% block title %}Register - Smart Shopping Platform{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card">
+                <div class="card-header bg-success text-white text-center py-4">
+                    <h3 class="mb-0">
+                        <i class="fas fa-user-plus me-2"></i>Create Account
+                    </h3>
+                </div>
+                <div class="card-body p-4">
+                    <form id="registerForm">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="first_name" class="form-label">First Name</label>
+                                <input type="text" class="form-control" id="first_name" name="first_name" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="last_name" class="form-label">Last Name</label>
+                                <input type="text" class="form-control" id="last_name" name="last_name" required>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="username" name="username" required>
+                            <div class="form-text">Choose a unique username</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email Address</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="password" class="form-label">Password</label>
+                                <input type="password" class="form-control" id="password" name="password" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="password_confirm" class="form-label">Confirm Password</label>
+                                <input type="password" class="form-control" id="password_confirm" name="password_confirm" required>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="phone_number" class="form-label">Phone Number (Optional)</label>
+                            <input type="tel" class="form-control" id="phone_number" name="phone_number">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="address" class="form-label">Address (Optional)</label>
+                            <textarea class="form-control" id="address" name="address" rows="3"></textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="date_of_birth" class="form-label">Date of Birth (Optional)</label>
+                            <input type="date" class="form-control" id="date_of_birth" name="date_of_birth">
+                        </div>
+                        
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="terms" required>
+                            <label class="form-check-label" for="terms">
+                                I agree to the Terms and Conditions
+                            </label>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success" id="registerBtn">
+                                <i class="fas fa-user-plus me-2"></i>Create Account
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <hr class="my-4">
+                    
+                    <div class="text-center">
+                        <p class="mb-0">Already have an account?</p>
+                        <a href="/login/" class="btn btn-outline-primary">
+                            <i class="fas fa-sign-in-alt me-2"></i>Login Here
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.getElementById('registerForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const registerBtn = document.getElementById('registerBtn');
+        const originalText = registerBtn.innerHTML;
+        
+        // Show loading state
+        registerBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Creating Account...';
+        registerBtn.disabled = true;
+        
+        const formData = new FormData(this);
+        const data = {
+            first_name: formData.get('first_name'),
+            last_name: formData.get('last_name'),
+            username: formData.get('username'),
+            email: formData.get('email'),
+            password: formData.get('password'),
+            password_confirm: formData.get('password_confirm'),
+            phone_number: formData.get('phone_number'),
+            address: formData.get('address'),
+            date_of_birth: formData.get('date_of_birth') || null,
+            role: 'customer'
+        };
+        
+        // Client-side validation
+        if (data.password !== data.password_confirm) {
+            showAlert('Passwords do not match!', 'danger');
+            registerBtn.innerHTML = originalText;
+            registerBtn.disabled = false;
+            return;
+        }
+        
+        try {
+            const response = await fetch('/api/auth/register/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            });
+            
+            const result = await response.json();
+            
+            if (response.ok) {
+                showAlert('Account created successfully! Please login.', 'success');
+                
+                // Redirect to login after a short delay
+                setTimeout(() => {
+                    window.location.href = '/login/';
+                }, 2000);
+            } else {
+                // Handle validation errors
+                let errorMessage = 'Registration failed. Please check your information.';
+                
+                if (result.username) {
+                    errorMessage = 'Username: ' + result.username.join(' ');
+                } else if (result.email) {
+                    errorMessage = 'Email: ' + result.email.join(' ');
+                } else if (result.password) {
+                    errorMessage = 'Password: ' + result.password.join(' ');
+                } else if (result.non_field_errors) {
+                    errorMessage = result.non_field_errors.join(' ');
+                }
+                
+                showAlert(errorMessage, 'danger');
+            }
+        } catch (error) {
+            console.error('Registration error:', error);
+            showAlert('Network error. Please try again.', 'danger');
+        } finally {
+            // Reset button state
+            registerBtn.innerHTML = originalText;
+            registerBtn.disabled = false;
+        }
+    });
+    
+    // Redirect if already logged in
+    if (localStorage.getItem('access_token')) {
+        window.location.href = '/';
+    }
+</script>
+{% endblock %}

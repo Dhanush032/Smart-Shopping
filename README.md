@@ -42,7 +42,7 @@ A comprehensive e-commerce backend system built with Django and Django REST Fram
 ## 📁 Project Structure
 
 ```
-ecommerce_backend/
+Smart Shopping/
 ├── accounts/              # User authentication & profiles
 ├── products/             # Product & category management
 ├── orders/              # Cart & order processing

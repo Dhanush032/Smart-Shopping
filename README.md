@@ -93,12 +93,8 @@ python manage.py migrate
 python manage.py createsuperuser
 ```
 
-### 6. Load Sample Data (Optional)
-```bash
-python manage.py loaddata fixtures/sample_data.json
-```
 
-### 7. Start Development Server
+### 6. Start Development Server
 ```bash
 python manage.py runserver
 ```
@@ -162,14 +158,6 @@ Visit `http://127.0.0.1:8000/` to access the application.
 
 ## 🔧 Configuration
 
-### Environment Variables
-Create a `.env` file in the project root:
-```env
-SECRET_KEY=your-secret-key-here
-DEBUG=True
-DATABASE_URL=mysql://username:password@localhost/ecommerce_db
-ALLOWED_HOSTS=localhost,127.0.0.1
-```
 
 ### Settings Configuration
 Key settings in `ecommerce_backend/settings.py`:
@@ -207,14 +195,6 @@ coverage html
 6. Configure email backend
 7. Set up logging
 8. Use environment variables for sensitive data
-
-### Docker Deployment
-```bash
-# Build and run with Docker Compose
-docker-compose up --build
-
-# Run in production mode
-docker-compose -f docker-compose.prod.yml up --build
 ```
 
 ## 🤝 Contributing
@@ -225,9 +205,6 @@ docker-compose -f docker-compose.prod.yml up --build
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## 🙋‍♂️ Support
 

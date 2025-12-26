@@ -105,61 +105,6 @@ python manage.py runserver
 
 Visit `http://127.0.0.1:8000/` to access the application.
 
-## 📚 API Documentation
-
-- **Swagger UI**: `http://127.0.0.1:8000/api/docs/`
-- **ReDoc**: `http://127.0.0.1:8000/api/redoc/`
-- **Django Admin**: `http://127.0.0.1:8000/admin/`
-
-## 🔐 API Endpoints
-
-### Authentication
-- `POST /api/auth/register/` - User registration
-- `POST /api/auth/login/` - User login
-- `POST /api/auth/logout/` - User logout
-- `POST /api/auth/token/refresh/` - Refresh JWT token
-- `GET /api/auth/profile/` - Get user profile
-- `PUT /api/auth/profile/` - Update user profile
-- `POST /api/auth/change-password/` - Change password
-
-### Products
-- `GET /api/products/` - List products (with filtering)
-- `POST /api/products/` - Create product (Admin only)
-- `GET /api/products/{slug}/` - Get product details
-- `PUT /api/products/{slug}/` - Update product (Admin only)
-- `DELETE /api/products/{slug}/` - Delete product (Admin only)
-- `GET /api/products/featured/` - Get featured products
-- `GET /api/products/low_stock/` - Get low stock products (Admin only)
-
-### Categories
-- `GET /api/products/categories/` - List categories
-- `POST /api/products/categories/` - Create category (Admin only)
-- `GET /api/products/categories/{slug}/` - Get category details
-- `PUT /api/products/categories/{slug}/` - Update category (Admin only)
-- `DELETE /api/products/categories/{slug}/` - Delete category (Admin only)
-
-### Cart & Orders
-- `GET /api/orders/cart/1/` - Get user's cart
-- `POST /api/orders/cart/add_item/` - Add item to cart
-- `PUT /api/orders/cart/update_item/` - Update cart item
-- `DELETE /api/orders/cart/remove_item/` - Remove cart item
-- `DELETE /api/orders/cart/clear/` - Clear cart
-- `GET /api/orders/orders/` - List orders
-- `POST /api/orders/orders/create_order/` - Create order from cart
-- `GET /api/orders/orders/{id}/` - Get order details
-- `PUT /api/orders/orders/{id}/update_status/` - Update order status (Admin only)
-
-## 🎨 Frontend Pages
-
-- **Home** (`/`) - Landing page with featured products
-- **Products** (`/products/`) - Product catalog with search & filters
-- **Cart** (`/cart/`) - Shopping cart management
-- **Login** (`/login/`) - User authentication
-- **Register** (`/register/`) - User registration
-- **Profile** (`/profile/`) - User profile management
-- **Orders** (`/orders/`) - Order history and tracking
-- **Admin Dashboard** (`/admin-dashboard/`) - Admin management interface
-
 ## 🔧 Configuration
 
 ### Environment Variables
@@ -196,27 +141,6 @@ coverage report
 coverage html
 ```
 
-## 📦 Deployment
-
-### Production Checklist
-1. Set `DEBUG = False` in settings
-2. Configure production database
-3. Set up static files serving
-4. Configure ALLOWED_HOSTS
-5. Set up SSL/HTTPS
-6. Configure email backend
-7. Set up logging
-8. Use environment variables for sensitive data
-
-### Docker Deployment
-```bash
-# Build and run with Docker Compose
-docker-compose up --build
-
-# Run in production mode
-docker-compose -f docker-compose.prod.yml up --build
-```
-
 ## 🤝 Contributing
 
 1. Fork the repository
@@ -225,16 +149,6 @@ docker-compose -f docker-compose.prod.yml up --build
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙋‍♂️ Support
-
-For support and questions:
-- Create an issue in the repository
-- Contact the development team
-- Check the API documentation for usage details
 
 ## 🔮 Future Enhancements
 
